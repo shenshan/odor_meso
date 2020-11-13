@@ -1,7 +1,8 @@
 # make sure to have a copy of this with 
 # file named .env
 
-DJ_HOST=DB_ADDRESS
+# Tentative address to access host's DB from within a Docker container
+DJ_HOST=host.docker.internal
 DJ_USER=YOUR_DB_USERNAME
 DJ_PASS=YOUR_DB_PASSWORD
 
