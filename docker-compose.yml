@@ -2,7 +2,7 @@ version: '2.0'
 
 services:
   notebook:
-    image: ninai/stimulus-pipeline:latest
+    build: .
     ports:
       - "8888:8888"
     volumes:
@@ -10,8 +10,6 @@ services:
       - /home/pipeline_data/:/tmp/
       - .:/data/pipeline/
     env_file: .env
-    environment:
-      - DISPLAY=$DISPLAY
     entrypoint:
       - jupyter 
       - lab
@@ -19,7 +17,6 @@ services:
       - --allow-root
       - --NotebookApp.token=''
       - --no-browser
-
 
   minion:
     image: ninai/stimulus-pipeline:latest

@@ -1,0 +1,7 @@
+# make sure to have a copy of this with 
+# file named .env
+
+DJ_HOST=DB_ADDRESS
+DJ_USER=YOUR_DB_USERNAME
+DJ_PASS=YOUR_DB_PASSWORD
+
