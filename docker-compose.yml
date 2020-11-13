@@ -6,8 +6,8 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - /mnt/:/mnt/
-      - /home/pipeline_data/:/tmp/
+      # - /mnt/:/mnt/
+      # - /home/pipeline_data/:/tmp/
       - .:/data/pipeline/
     env_file: .env
     entrypoint:
@@ -18,11 +18,12 @@ services:
       - --NotebookApp.token=''
       - --no-browser
 
+  # this is run to actually dispatch pipeline
   minion:
-    image: ninai/stimulus-pipeline:latest
+    image: ninai/pipeline
     volumes:
-      - /mnt/:/mnt/
-      - /home/pipeline_data:/tmp/
+      # - /mnt/:/mnt/
+      # - /home/pipeline_data:/tmp/
       - .:/data/pipeline
     env_file: .env
     entrypoint:
@@ -32,27 +33,26 @@ services:
 
   minion-gpu:
     image: ninai/pipeline:tf-gpu
-    runtime: nvidia
+    # runtime: nvidia
     volumes:
-      - /mnt/:/mnt/
-      - /home/pipeline_data:/tmp/
+      #- /mnt/:/mnt/
+      #- /home/pipeline_data:/tmp/
       - .:/data/pipeline
     env_file: .env
     entrypoint:
       - python3 
       - /data/pipeline/python/scripts/populate-minion_gpu.py
 
-  
   bash:
     image: ninai/stimulus-pipeline:latest
     volumes:
-      - /mnt/:/mnt/
-      - /home/pipeline_data/:/tmp/
+      #- /mnt/:/mnt/
+      #- /home/pipeline_data/:/tmp/
       - .:/data/pipeline
+      # this line allows local timezone of host to be
+      # reflected inside Docker
       - /etc/localtime:/etc/localtime:ro
-      - /tmp/.X11-unix:/tmp/.X11-unix
+      #- /tmp/.X11-unix:/tmp/.X11-unix
     env_file: .env
-    environment:
-      - DISPLAY=$DISPLAY
     entrypoint:
       - /bin/bash
