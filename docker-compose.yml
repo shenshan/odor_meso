@@ -10,7 +10,7 @@ services:
       # - /home/pipeline_data/:/tmp/
       - .:/data/pipeline/
       - ../commons:/data/commons
-      - ~/Documents/Pfaffinger_Reimer/pipeline-externals:/mnt/dj-stor01/pipeline-externals
+      - ./pipeline-externals:/mnt/dj-stor01/pipeline-externals
     env_file: .env
     entrypoint:
       - jupyter 

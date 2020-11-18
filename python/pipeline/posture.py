@@ -11,7 +11,7 @@ from . import experiment, notify
 from .exceptions import PipelineException
 
 
-schema = dj.schema('pipeline_posture', locals())
+schema = dj.schema('pipeline_posture')
 
 
 @schema

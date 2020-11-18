@@ -2,7 +2,7 @@ import datajoint as dj
 from datajoint.hash import hash_key_values
 
 from . import experiment
-schema = dj.schema('pipeline_notification', locals())
+schema = dj.schema('pipeline_notification')
 
 # Decorator for notification functions. Ignores exceptions.
 def ignore_exceptions(f):

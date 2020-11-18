@@ -21,13 +21,11 @@ Our stack/motor coordinate system is consistent with numpy's: z in the first axi
 downwards, y in the second axis pointing towards you and x on the third axis pointing to 
 the right.
 """
-dj.config['stores'] = {'external-stack': {'protocol': 'file', 'location': '/mnt/dj-stor01/pipeline-externals'}}
-# dj.config['external-stack'] = {'protocol': 'file',
-#                                'location': '/mnt/dj-stor01/pipeline-externals'}
+dj.config['stores'] = {'stack_storage': {'protocol': 'file', 'location': '/mnt/dj-stor01/pipeline-externals'}}
 dj.config['cache'] = '/tmp/dj-cache'
 
 
-schema = dj.schema('pipeline_stack', locals(), create_tables=False)
+schema = dj.schema('pipeline_stack')
 
 
 @schema
@@ -949,9 +947,9 @@ class PreprocessedStack(dj.Computed):
     -> CorrectedStack
     -> shared.Channel
     ---
-    resized:        blob@external-stack      # original stack resized to 1 um^3
-    lcned:          blob@external-stack      # local contrast normalized stack. Filter size: (3, 25, 25)
-    sharpened:      blob@external-stack      # sharpened stack. Filter size: 1
+    resized:        blob@stack_storage      # original stack resized to 1 um^3
+    lcned:          blob@stack_storage      # local contrast normalized stack. Filter size: (3, 25, 25)
+    sharpened:      blob@stack_storage      # sharpened stack. Filter size: 1
     """
 
     @property
@@ -1198,7 +1196,7 @@ class Segmentation(dj.Computed):
     -> PreprocessedStack
     -> SegmentationTask
     ---
-    segmentation            : blob@external-stack # voxel-wise cell-ids (0 for background)
+    segmentation            : blob@stack_storage # voxel-wise cell-ids (0 for background)
     nobjects                : int            # number of cells found            
     """
 
@@ -1206,8 +1204,8 @@ class Segmentation(dj.Computed):
         definition = """ # attributes particular to convnet based methods
         -> master
         ---
-        centroids           : blob@external-stack # voxel-wise probability of centroids
-        probs               : blob@external-stack # voxel-wise probability of cell nuclei 
+        centroids           : blob@stack_storage # voxel-wise probability of centroids
+        probs               : blob@stack_storage # voxel-wise probability of cell nuclei 
         seg_threshold       : float          # threshold used for the probability maps
         min_voxels          : int            # minimum number of voxels (in cubic microns)
         max_voxels          : int            # maximum number of voxels (in cubic microns)

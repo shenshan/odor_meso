@@ -6,7 +6,7 @@ import os
 from commons import lab
 
 
-schema = dj.schema('pipeline_experiment', locals())#, create_tables=False)
+schema = dj.schema('pipeline_experiment')
 
 
 @schema
@@ -337,7 +337,7 @@ class SurgeryOutcome(dj.Lookup):
     ]
 
 @schema
-class Mice(dj.Manual):
+class Mouse(dj.Manual):
     definition = """  # calcium-sensitive indicators
           animal_id           : int                                            # id number
           ---
@@ -360,7 +360,7 @@ class Mice(dj.Manual):
 @schema
 class Surgery(dj.Manual):
     definition = """ # surgeries performed on mice
-    -> Mice
+    -> Mouse
     surgery_id                   : smallint               # Unique number given to each surgery
     ---
     date                         : date                   # YYYY-MM-DD Format. Date surgery was performed
@@ -395,7 +395,7 @@ class SurgeryStatus(dj.Manual):
 class Session(dj.Manual):
     definition = """  # imaging session
 
-    -> Mice
+    -> Mouse
     session                      : smallint            # session index for the mouse
     ---
     -> Rig
@@ -674,4 +674,3 @@ class ProjectorSetup(dj.Lookup):
     """
 
 
-# schema.spawn_missing_classes()

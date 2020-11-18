@@ -7,7 +7,7 @@ import datajoint as dj
 from stimulus import stimulus
 
 
-schema = dj.schema('pipeline_movies', locals())
+schema = dj.schema('pipeline_movies')
 
 
 @schema

@@ -6,7 +6,7 @@ from scipy import ndimage
 from . import meso, stack
 
 
-schema = dj.schema('pipeline_fastmeso', locals(), create_tables=True)
+schema = dj.schema('pipeline_fastmeso', create_tables=True)
 
 
 @schema

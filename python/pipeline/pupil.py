@@ -51,11 +51,6 @@ __VERSION__ = "1.0.0"
 
 schema = dj.schema('pipeline_eye')
 
-
-# dj.config['external-pupil'] = dict(protocol='file',
-#        location='/mnt/dj-stor01/pupil_fitting')
-
-
 DEFAULT_PARAMETERS = {'relative_area_threshold': 0.002,
                       'ratio_threshold': 1.5,
                       'error_threshold': 0.1,

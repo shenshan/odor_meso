@@ -8,12 +8,9 @@ from pipeline import reso, experiment, mice, notify, shared
 from pipeline.utils import galvo_corrections, signal, quality, mask_classification, performance, h5
 
 # external storage place
-dj.config['stores'] = {'external': {'protocol': 'file', 'location': '/mnt/dj-stor01/pipeline-externals'}}
+dj.config['stores'] = {'vreso_storage': {'protocol': 'file', 'location': '/mnt/dj-stor01/pipeline-externals'}}
 
-# dj.config['external'] = {'protocol': 'file',
-#                          'location': '/mnt/dj-stor01/pipeline-externals'}
-
-schema = dj.schema("pipeline_vreso", locals(), create_tables=False)
+schema = dj.schema('pipeline_vreso')
 CURRENT_VERSION = 1
 
 
@@ -72,11 +69,11 @@ class RecordingInfo(dj.Imported):
     definition = """ # Imported information of a single recording of a cell
     -> Recording
     ---
-    voltage                       : blob@external            # (V_amplifier) recorded voltage
-    current                       : blob@external            # (V_amplifier) recorded current
-    command                       : blob@external            # (V_amplifier) output voltage/current into cell
-    patch_times                   : blob@external            # (seconds) ephys recording times on timestamp/master clock
-    frame_times                   : blob@external            # (seconds) scanimage times on timestamp/master clock
+    voltage                       : blob@vreso_storage            # (V_amplifier) recorded voltage
+    current                       : blob@vreso_storage            # (V_amplifier) recorded current
+    command                       : blob@vreso_storage            # (V_amplifier) output voltage/current into cell
+    patch_times                   : blob@vreso_storage            # (seconds) ephys recording times on timestamp/master clock
+    frame_times                   : blob@vreso_storage            # (seconds) scanimage times on timestamp/master clock
     vgain                         : float               # (mV_cell/V_amplifier) gain applied to recorded voltage
     igain                         : float               # (nA_cell/V_amplifier) gain applied to recorded current
     command_gain                  : float               # ([cell_nA or cell_mV]/V_computer) gain applied to command output
@@ -169,7 +166,7 @@ class PatchSpikes(dj.Computed):
     definition = """
         -> RecordingInfo
         ---
-        spike_ts                  : blob@external            # (seconds) array of times spikes occurred on timestamp/master clock
+        spike_ts                  : blob@vreso_storage            # (seconds) array of times spikes occurred on timestamp/master clock
         """
 
 
@@ -178,7 +175,7 @@ class ManualPatchSpikes(dj.Manual):
     definition = """
         -> RecordingInfo
         ---
-        spike_ts                  : blob@external            # (seconds) array of times spikes occurred on timestamp/master clock
+        spike_ts                  : blob@vreso_storage            # (seconds) array of times spikes occurred on timestamp/master clock
         method_notes = ''         : varchar(256)
         """
 

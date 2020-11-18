@@ -8,7 +8,7 @@ from . import experiment, notify
 from .utils import h5
 
 
-schema = dj.schema('pipeline_treadmill', locals())
+schema = dj.schema('pipeline_treadmill')
 
 
 @schema

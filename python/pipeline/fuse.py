@@ -5,7 +5,7 @@ from . import experiment, reso, meso, shared
 from .exceptions import PipelineException
 
 
-schema = dj.schema('pipeline_fuse', locals())
+schema = dj.schema('pipeline_fuse')
 
 
 @schema
