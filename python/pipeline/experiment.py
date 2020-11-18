@@ -639,11 +639,6 @@ class ProjectorConfig(dj.Lookup):
     refresh_rate                : float                     # refresh rate in Hz
 
     """
-    # contents = [
-    #     [0, 4, 2, 3, 60],
-    #     [1, 4, 4, 2, 60],
-    #     [2, 4, 4, 2, 30]
-    # ]
 
 
 @schema
