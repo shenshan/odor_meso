@@ -1,8 +1,9 @@
 import datajoint as dj
-from pipeline import map, experiment, shared
+from . import map, experiment, shared
 
 schema = dj.schema('pipeline_anatomy')
 
+@schema
 class Area (dj.Lookup):
      definition = """
           brain_area : varchar(12)   # short brain area name
@@ -20,6 +21,7 @@ class Area (dj.Lookup):
             ['LM']
      ]
 
+@schema
 class AreaMask (dj.Manual):
      definition = """
           # Area mask for each scan

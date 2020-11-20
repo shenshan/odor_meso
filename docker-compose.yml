@@ -10,7 +10,7 @@ services:
       # - /home/pipeline_data/:/tmp/
       - .:/data/pipeline/
       - ../commons:/data/commons
-      - ./pipeline-externals:/mnt/dj-stor01/pipeline-externals
+      - ${EXTERNAL_MOUNT:-./external}:/external
     env_file: .env
     entrypoint:
       - jupyter 

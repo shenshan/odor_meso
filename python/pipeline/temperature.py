@@ -1,13 +1,12 @@
 import datajoint as dj
 from pipeline import experiment
-from commons import lab
-from datajoint.jobs import key_hash
+from datajoint.hash import hash_key_values
 import os
 import numpy as np
 
 from .utils import h5, signal
 from .exceptions import PipelineException
-from . import notify
+from . import notify, lab
 
 
 schema = dj.schema('pipeline_temperature')
@@ -74,7 +73,7 @@ class Temperature(dj.Imported):
         plt.plot(ts, temperatures)
         plt.ylabel('Temperature (C)')
         plt.xlabel('Seconds')
-        img_filename = '/tmp/' + key_hash(key) + '.png'
+        img_filename = '/tmp/' + hash_key_values(key) + '.png'
         fig.savefig(img_filename)
         plt.close(fig)
 

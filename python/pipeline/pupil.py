@@ -27,7 +27,6 @@ import cv2
 import numpy as np
 import pandas as pd
 import json
-from commons import lab
 import datajoint as dj
 from datajoint.hash import hash_key_values
 from datajoint.autopopulate import AutoPopulate
@@ -36,7 +35,7 @@ from .utils.decorators import gitlog
 from .utils import eye_tracking, h5
 from .utils.eye_tracking import PupilTracker, ManualTracker
 from . import config
-from . import experiment, notify, shared
+from . import experiment, notify, shared, lab
 from .exceptions import PipelineException
 
 from IPython import display

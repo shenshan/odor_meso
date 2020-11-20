@@ -1,5 +1,5 @@
 import datajoint as dj
-from pipeline import experiment
+from . import experiment
 
 schema = dj.schema('pipeline_collection')
 
