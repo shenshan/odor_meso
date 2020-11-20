@@ -4,17 +4,11 @@ import os
 import datajoint as dj
 import numpy as np
 
-from pipeline import mice
-from pipeline import meso
-from pipeline.utils import h5
-from commons import lab
+from . import mouse, meso, lab
+from .utils import h5
 from .exceptions import PipelineException
 
-
-#dj.config['external-odor'] = {'protocol': 'file',
-#                              'location': '/mnt/dj-stor01/pipeline-externals'}
-
-schema = dj.schema('pipeline_odor', locals(), create_tables=False)
+schema = dj.schema('pipeline_odor')
 
 
 @schema
@@ -46,7 +40,7 @@ class OdorSolution(dj.Manual):
 @schema
 class OdorSession(dj.Manual):
     definition = """ # Single session of olfactory experiment.
-    -> mice.Mice
+    -> mouse.Mouse
     odor_session                : smallint unsigned    # session index for the mouse
     ---
     odor_path                   : varchar(2048)        # folder where h5 files for olfaction are stored

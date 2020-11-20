@@ -27,16 +27,15 @@ import cv2
 import numpy as np
 import pandas as pd
 import json
-from commons import lab
 import datajoint as dj
-from datajoint.jobs import key_hash
+from datajoint.hash import hash_key_values
 from datajoint.autopopulate import AutoPopulate
 
 from .utils.decorators import gitlog
 from .utils import eye_tracking, h5
 from .utils.eye_tracking import PupilTracker, ManualTracker
 from . import config
-from . import experiment, notify, shared
+from . import experiment, notify, shared, lab
 from .exceptions import PipelineException
 
 from IPython import display
@@ -50,11 +49,6 @@ import datetime
 __VERSION__ = "1.0.0"
 
 schema = dj.schema('pipeline_eye')
-
-
-dj.config['external-pupil'] = dict(protocol='file',
-       location='/mnt/dj-stor01/pupil_fitting')
-
 
 DEFAULT_PARAMETERS = {'relative_area_threshold': 0.002,
                       'ratio_threshold': 1.5,
@@ -158,7 +152,7 @@ class Eye(dj.Imported):
     def notify(self, key, frames):
         import imageio
 
-        video_filename = '/tmp/' + key_hash(key) + '.gif'
+        video_filename = '/tmp/' + hash_key_values(key) + '.gif'
         frames = [imresize(img, 0.25) for img in frames.transpose([2, 0, 1])]
         imageio.mimsave(video_filename, frames, duration=0.5)
 
@@ -549,19 +543,6 @@ class Tracking(dj.Computed):
     tracking_ts=CURRENT_TIMESTAMP   : timestamp  # automatic
     """
 
-    class ManualTrackingParameter(dj.Part):
-        definition = """
-        -> master.ManualTracking
-        ---
-        min_lambda=NULL         : float     # minimum mixing weight for current frame in running average computation (1 means no running avg was used)
-        roi=NULL                : longblob  # roi of eye
-        gauss_blur=NULL         : float     # bluring of ROI
-        exponent=NULL           : tinyint   # exponent for contrast enhancement
-        dilation_iter=NULL      : tinyint   # number of dilation and erosion operations
-        min_contour_len=NULL    : tinyint   # minimal contour length
-        running_avg_mix=NULL    : float     # weight a in a * current_frame + (1-a) * running_avg
-        """
-
     class ManualTracking(dj.Part):
         definition = """
         -> master
@@ -637,6 +618,19 @@ class Tracking(dj.Computed):
                         frame.insert1(dict(key, frame_id=frame_id))
                     parameters.insert1(
                         dict(key, **params, min_lambda=min_lambda), ignore_extra_fields=True)
+
+    class ManualTrackingParameter(dj.Part):
+        definition = """
+        -> master.ManualTracking
+        ---
+        min_lambda=NULL         : float     # minimum mixing weight for current frame in running average computation (1 means no running avg was used)
+        roi=NULL                : longblob  # roi of eye
+        gauss_blur=NULL         : float     # bluring of ROI
+        exponent=NULL           : tinyint   # exponent for contrast enhancement
+        dilation_iter=NULL      : tinyint   # number of dilation and erosion operations
+        min_contour_len=NULL    : tinyint   # minimal contour length
+        running_avg_mix=NULL    : float     # weight a in a * current_frame + (1-a) * running_avg
+        """
 
     class Deeplabcut(dj.Part):
         definition = """

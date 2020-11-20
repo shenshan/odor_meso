@@ -9,6 +9,8 @@ services:
       # - /mnt/:/mnt/
       # - /home/pipeline_data/:/tmp/
       - .:/data/pipeline/
+      - ../commons:/data/commons
+      - ${EXTERNAL_MOUNT:-./external}:/external
     env_file: .env
     entrypoint:
       - jupyter 

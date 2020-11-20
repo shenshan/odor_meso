@@ -1,14 +1,13 @@
 import datajoint as dj
-from datajoint.jobs import key_hash
+from datajoint.hash import hash_key_values
 import numpy as np
-from commons import lab
 import os
 
-from . import experiment, notify
+from . import experiment, notify, lab
 from .utils import h5
 
 
-schema = dj.schema('pipeline_treadmill', locals())
+schema = dj.schema('pipeline_treadmill')
 
 
 @schema
@@ -89,7 +88,7 @@ class Treadmill(dj.Computed):
         plt.plot(time, velocity)
         plt.ylabel('Treadmill velocity (cm/sec)')
         plt.xlabel('Seconds')
-        img_filename = '/tmp/' + key_hash(key) + '.png'
+        img_filename = '/tmp/' + hash_key_values(key) + '.png'
         fig.savefig(img_filename)
         plt.close(fig)
 

@@ -1,5 +1,5 @@
 #!/usr/local/bin/python3
-from pipeline import experiment, reso, meso, fuse, stack, pupil, treadmill, posture
+from pipeline import experiment, reso, meso, fuse, stack, pupil, treadmill
 from stimulus import stimulus
 from stimline import tune
 
@@ -15,11 +15,10 @@ next_scans = (experiment.AutoProcessing  &
 stimulus.Sync.populate(next_scans, reserve_jobs=True, suppress_errors=True)
 stimulus.BehaviorSync.populate(next_scans, reserve_jobs=True, suppress_errors=True)
 
-# treadmill, pupil, posture
+# treadmill, pupil
 treadmill.Treadmill.populate(next_scans, reserve_jobs=True, suppress_errors=True)
 pupil.Eye.populate(next_scans, reserve_jobs=True, suppress_errors=True)
 pupil.FittedPupil.populate(next_scans, reserve_jobs=True, suppress_errors=True)
-posture.Posture.populate(next_scans, reserve_jobs=True, suppress_errors=True)
 
 # stack
 stack.StackInfo.populate(stack.CorrectionChannel, reserve_jobs=True, suppress_errors=True)

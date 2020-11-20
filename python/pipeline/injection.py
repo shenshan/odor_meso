@@ -1,12 +1,11 @@
 """ Schemas for viral injections """
 import numpy as np
 import datajoint as dj
-from commons import virus
-from . import mice
+from . import mouse
 from .exceptions import PipelineException
 
 
-schema = dj.schema('pipeline_injection', locals(), create_tables=False)
+schema = dj.schema('pipeline_injection')
 CURRENT_VERSION = 1
 
 
@@ -26,7 +25,7 @@ class Target(dj.Lookup):
 class InjectionSession(dj.Manual):
     definition = """
     # Injection Session
-    -> mice.Mice
+    -> mouse.Mouse
     injection_session=1           : tinyint unsigned                    # injection session index
     injection_datetime            : datetime                            # time of injection 'YYYY-MM-DD HH:MM:SS' 
     ---
@@ -47,7 +46,6 @@ class InjectionSite(dj.Manual):
     coord_depth                   : decimal(3,2)                        # (mm) depth from brain surface
     coord_depth_initial           : decimal(3,2)                        # (mm) the deepest initial penetration of the pipette
     tip_size                      : tinyint unsigned                    # (um) 
-    -> [nullable] virus.Virus
     virus_total                   : tinyint unsigned                    # (nL) the total virus volume for each injection site
     virus_injection_speed=4       : tinyint unsigned                    # (nL/s) speed of injection with nano pump
     visualize_confirmation        : bool                                # Was virus extrusion visually confirmed?

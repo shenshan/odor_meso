@@ -1,12 +1,11 @@
 import datajoint as dj
 import pandas as pd
-from . import mice  # needed for referencing
+from . import mouse, lab
 import numpy as np
 import os
-from commons import lab
 
 
-schema = dj.schema('pipeline_experiment', locals(), create_tables=False)
+schema = dj.schema('pipeline_experiment')
 
 
 @schema
@@ -170,10 +169,10 @@ class Layer(dj.Lookup):
     z_end=null           : float        # deepest point
     """
     contents = [
-        ['L1', '', 0, 100],
-        ['L2/3', '', 100, 370],
-        ['L4', '', 370, 500],
-        {'layer': 'unset', 'layer_description': ''}
+        {'layer':'L1', 'layer_description':'','z_start': 0, 'z_end':100},
+        {'layer':'L2/3', 'layer_description':'','z_start': 100, 'z_end':370},
+        {'layer':'L4', 'layer_description':'', 'z_start': 370, 'z_end':500},
+        {'layer': 'unset', 'layer_description': '','z_start': None, 'z_end':None}
     ]
 
     def get_layers(self, z):
@@ -297,44 +296,6 @@ class LaserCalibration(dj.Manual):
         return fig, ax
 
 @schema
-class MonitorCalibration(dj.Manual):
-    definition = """ # monitor luminance calibration
-    
-    -> experiment.Scan
-    ---
-    pixel_value             : mediumblob      # control pixel value (0-255)
-    luminance               : mediumblob      # luminance in cd/m^2
-    amplitude               : float           # lum = Amp*pixel_value^gamma + offset
-    gamma                   : float           #
-    offset                  : float           #
-    mse                     : float           #
-    ts                      : timestamp       # timestamp
-    """
-
-    def plot_calibration_curve(self):
-        import matplotlib.pyplot as plt
-
-        # Get data
-        pixel_values, luminances = self.fetch1('pixel_value', 'luminance')
-
-        # Plot original data
-        fig = plt.figure()
-        plt.plot(pixel_values, luminances, label='Data')
-        plt.xlabel('Pixel intensities')
-        plt.ylabel('Luminance (cd/m^2)')
-
-        # Plot fit
-        amp, gamma, offset = self.fetch1('amplitude', 'gamma', 'offset')
-        xs = np.arange(255) # pixel
-        ys = amp * (xs ** gamma) + offset
-        plt.plot(xs, ys, label='Fit')
-
-        plt.legend()
-
-        return fig
-
-
-@schema
 class MouseRoom(dj.Lookup):
     definition = """ # Mouse location after surgery
     mouse_room                : varchar(64)         # Building letter along with room number
@@ -374,11 +335,10 @@ class SurgeryOutcome(dj.Lookup):
         ['Non-Survival'],
     ]
 
-
 @schema
 class Surgery(dj.Manual):
     definition = """ # surgeries performed on mice
-    -> mice.Mice
+    -> mouse.Mouse
     surgery_id                   : smallint               # Unique number given to each surgery
     ---
     date                         : date                   # YYYY-MM-DD Format. Date surgery was performed
@@ -413,7 +373,7 @@ class SurgeryStatus(dj.Manual):
 class Session(dj.Manual):
     definition = """  # imaging session
 
-    -> mice.Mice
+    -> mouse.Mouse
     session                      : smallint            # session index for the mouse
     ---
     -> Rig
@@ -499,7 +459,7 @@ class Scan(dj.Manual, HasFilename):
     class EyeVideo(dj.Part):
         definition = """  # name of the eye tracking video
 
-        -> Scan
+        -> master
         ---
         filename            : varchar(50)                   # filename of the video
         """
@@ -507,7 +467,7 @@ class Scan(dj.Manual, HasFilename):
     class BehaviorFile(dj.Part):
         definition = """  # name of the running wheel file
 
-        -> Scan
+        -> master
         ---
         filename            : varchar(50)                   # filename of the video
         """
@@ -515,13 +475,50 @@ class Scan(dj.Manual, HasFilename):
     class Laser(dj.Part):
         definition = """  # laser parameters for the scan
 
-        -> Scan
+        -> master
         ---
         wavelength          : float                         # (nm)
         power               : float                         # (mW) to brain
         gdd                 : float                         # gdd setting
         """
 
+
+@schema
+class MonitorCalibration(dj.Manual):
+    definition = """ # monitor luminance calibration
+    
+    -> Scan
+    ---
+    pixel_value             : mediumblob      # control pixel value (0-255)
+    luminance               : mediumblob      # luminance in cd/m^2
+    amplitude               : float           # lum = Amp*pixel_value^gamma + offset
+    gamma                   : float           #
+    offset                  : float           #
+    mse                     : float           #
+    ts                      : timestamp       # timestamp
+    """
+
+    def plot_calibration_curve(self):
+        import matplotlib.pyplot as plt
+
+        # Get data
+        pixel_values, luminances = self.fetch1('pixel_value', 'luminance')
+
+        # Plot original data
+        fig = plt.figure()
+        plt.plot(pixel_values, luminances, label='Data')
+        plt.xlabel('Pixel intensities')
+        plt.ylabel('Luminance (cd/m^2)')
+
+        # Plot fit
+        amp, gamma, offset = self.fetch1('amplitude', 'gamma', 'offset')
+        xs = np.arange(255) # pixel
+        ys = amp * (xs ** gamma) + offset
+        plt.plot(xs, ys, label='Fit')
+
+        plt.legend()
+
+        return fig
 
 @schema
 class Stack(dj.Manual):
@@ -590,7 +587,7 @@ class AutoProcessing(dj.Manual):
     -> Scan
     ---
     priority=0          :tinyint       # highest priority is processed first
-    autosegment=false   :boolean       # segment somas in the first channel with default method
+    autosegment=0   :boolean       # segment somas in the first channel with default method
     """
 
 @schema
@@ -620,11 +617,6 @@ class ProjectorConfig(dj.Lookup):
     refresh_rate                : float                     # refresh rate in Hz
 
     """
-    contents = [
-        [0, 4, 2, 3, 60],
-        [1, 4, 4, 2, 60],
-        [2, 4, 4, 2, 30]
-    ]
 
 
 @schema
@@ -655,4 +647,3 @@ class ProjectorSetup(dj.Lookup):
     """
 
 
-schema.spawn_missing_classes()

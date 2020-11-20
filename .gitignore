@@ -1,7 +1,10 @@
 .DS_Store
+external*/
+data*/
 
 # pipeline configuration
-.env
+.env*
+*.env
 pipeline_config.json
 
 
